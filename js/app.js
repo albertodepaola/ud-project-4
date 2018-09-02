@@ -1,6 +1,6 @@
 // Model
-
 var MapLocation = function(data) {
+    this.id = data.id;
     this.title = data.title;
     this.location = data.location;
     // TODO
@@ -8,51 +8,60 @@ var MapLocation = function(data) {
     this.foursquareSrc = data.foursquareSrc;
 }
 
+var mapLocationsArray = [
+    new MapLocation({id: 1, title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}}),
+    new MapLocation({id: 2, title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}}),
+    new MapLocation({id: 3, title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}}),
+    new MapLocation({id: 4, title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}}),
+    new MapLocation({id: 5, title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}}),
+    new MapLocation({id: 6, title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}),
+];
 
-
-var viewModel = function () {
+function createViewModel(markers) {
 
     var self = this;
 
-    self.mapLocations = ko.observableArray([
-        new MapLocation({title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}}),
-        new MapLocation({title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}}),
-        new MapLocation({title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}}),
-        new MapLocation({title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}}),
-        new MapLocation({title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}}),
-        new MapLocation({title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}),
-    ]);
+    self.mapLocations = ko.observableArray(markers);
 
     self.locationQuery = ko.observable();
 
     self.searchResults = ko.computed(function () {
         var lowerCaseLocationQuery = self.locationQuery();
         if(!lowerCaseLocationQuery){
+            self.mapLocations().forEach(function (marker) {
+                marker.setMap(map);
+            });
             return self.mapLocations();
         } else {
             var filteredMapLocations = self.mapLocations();
-            return filteredMapLocations.filter(function (mapLocation) {
+            // filteredMapLocations.map(marker => marker.setMap(undefined));
+            filteredMapLocations.forEach(function (marker) {
+               marker.setMap(null);
+            });
+
+            filteredMapLocations = filteredMapLocations.filter(function (mapLocation) {
                 var title = mapLocation.title;
                 return title.toLowerCase().indexOf(lowerCaseLocationQuery.toLowerCase()) > -1;
             });
+
+            filteredMapLocations.forEach(function (marker) {
+                marker.setMap(map);
+            });
+            return filteredMapLocations;
         }
     }, self);
 
     self.showMarkerInMap = function (data) {
         console.log(data);
         console.log('cliked: ' + data.title);
+        new google.maps.event.trigger(data, 'click');
     };
 
-};
-
-ko.applyBindings(viewModel);
+}
 
 // Google maps
 
 var map;
-
-// Create a new blank array for all the listing markers.
-var markers = [];
 
 function initMap() {
     // Create a styles array to use with the map.
@@ -123,6 +132,9 @@ function initMap() {
         }
     ];
 
+    // Create a new blank array for all the listing markers.
+    var markers = [];
+
     // Constructor creates a new map - only center and zoom are required.
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 40.7413549, lng: -73.9980244},
@@ -133,17 +145,9 @@ function initMap() {
 
     // These are the real estate listings that will be shown to the user.
     // Normally we'd have these in a database instead.
-    var locations = [
-        {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
-        {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-        {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
-        {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
-        {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
-        {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
-    ];
+    var locations = mapLocationsArray;
 
     var largeInfowindow = new google.maps.InfoWindow();
-
 
     // Style the markers a bit. This will be our listing marker icon.
     var defaultIcon = makeMarkerIcon('0091ff');
@@ -152,19 +156,26 @@ function initMap() {
     // mouses over the marker.
     var highlightedIcon = makeMarkerIcon('FFFF24');
 
+    // map bounds
+    var bounds = new google.maps.LatLngBounds();
     // The following group uses the location array to create an array of markers on initialize.
     for (var i = 0; i < locations.length; i++) {
         // Get the position from the location array.
         var position = locations[i].location;
         var title = locations[i].title;
+        var id = locations[i].id;
         // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
             icon: defaultIcon,
-            id: i
+            id: id,
+            map: map,
         });
+        // extend map bounds to cover all the markers
+        bounds.extend(marker.position);
+
         // Push the marker to our array of markers.
         markers.push(marker);
         // Create an onclick event to open the large infowindow at each marker.
@@ -181,8 +192,13 @@ function initMap() {
         });
     }
 
-    document.getElementById('show-listings').addEventListener('click', showListings);
-    document.getElementById('hide-listings').addEventListener('click', hideListings);
+    map.fitBounds(bounds);
+
+    console.log('markers array');
+
+    var viewModel = createViewModel(markers)
+
+    ko.applyBindings(viewModel);
 
 }
 
@@ -190,6 +206,9 @@ function initMap() {
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
 function populateInfoWindow(marker, infowindow) {
+
+    bounceMarker(marker, 1000);
+
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
         // Clear the infowindow content to give the streetview time to load.
@@ -232,24 +251,6 @@ function populateInfoWindow(marker, infowindow) {
     }
 }
 
-// This function will loop through the markers array and display them all.
-function showListings() {
-    var bounds = new google.maps.LatLngBounds();
-    // Extend the boundaries of the map for each marker and display the marker
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
-        bounds.extend(markers[i].position);
-    }
-    map.fitBounds(bounds);
-}
-
-// This function will loop through the listings and hide them all.
-function hideListings() {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-}
-
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
@@ -262,6 +263,17 @@ function makeMarkerIcon(markerColor) {
         new google.maps.Point(10, 34),
         new google.maps.Size(21,34));
     return markerImage;
+}
+
+function bounceMarker(marker, timeout) {
+    if (marker.getAnimation() !== null) {
+        marker.setAnimation(null);
+    } else {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function () {
+            marker.setAnimation(null);
+        }, timeout);
+    }
 }
 
 // Google maps

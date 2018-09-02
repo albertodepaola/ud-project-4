@@ -11,20 +11,18 @@
       <div class="options-box">
         <h1>Places I would like to visit - Neighbourhood map project</h1>
         <div>
-          <input id="show-listings" type="button" value="Show Listings">
-          <input id="hide-listings" type="button" value="Hide Listings">
+          <label for="locationQuery">Search places</label>
+          <input id="locationQuery" placeholder="Filter markers" data-bind="textInput: locationQuery">
         </div>
-
         <div class="places-list">
-          <input data-bind="textInput: locationQuery">
           <ul data-bind="foreach: searchResults">
             <li>
               <p data-bind="click: showMarkerInMap, text: title">
               </p>
             </li>
+            <hr>
           </ul>
         </div>
-
       </div>
 
       <div id="map"></div>
