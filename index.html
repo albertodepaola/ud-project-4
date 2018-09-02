@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Places I would like to visit - Neighbourhood map project</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="options-box">
+        <h1>Places I would like to visit - Neighbourhood map project</h1>
+        <div>
+          <input id="show-listings" type="button" value="Show Listings">
+          <input id="hide-listings" type="button" value="Hide Listings">
+        </div>
+
+        <div class="places-list">
+          <input data-bind="textInput: locationQuery">
+          <ul data-bind="foreach: searchResults">
+            <li>
+              <p data-bind="click: showMarkerInMap, text: title">
+              </p>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div id="map"></div>
+    </div>
+    <script src="js/knockout-3.4.2.js"></script>
+    <script src="js/app.js"></script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3umzq8VeOzvMUEKQkw8TWlx5Hu_vRuyw&libraries=geometry&v=3&callback=initMap">
+    </script>
+
+  </body>
+</html>
