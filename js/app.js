@@ -8,7 +8,7 @@ var MapLocation = function(data) {
     this.foursquareSrc = data.foursquareSrc;
 }
 
-var mapLocationsArray = [
+var mapLocations = [
     new MapLocation({id: 1, title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}}),
     new MapLocation({id: 2, title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}}),
     new MapLocation({id: 3, title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}}),
@@ -17,9 +17,13 @@ var mapLocationsArray = [
     new MapLocation({id: 6, title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}),
 ];
 
-function createViewModel(markers) {
+function createViewModel(markers, error = false, errorMessage = 'Error loading app.') {
 
     var self = this;
+
+    self.error = ko.observable(error);
+
+    self.errorMessage = ko.observable(errorMessage);
 
     self.mapLocations = ko.observableArray(markers);
 
@@ -28,32 +32,35 @@ function createViewModel(markers) {
     self.searchResults = ko.computed(function () {
         var lowerCaseLocationQuery = self.locationQuery();
         if(!lowerCaseLocationQuery){
-            self.mapLocations().forEach(function (marker) {
-                marker.setMap(map);
-            });
+            if (!error) {
+                self.mapLocations().forEach(function (marker) {
+                    marker.setMap(map);
+                });
+            }
             return self.mapLocations();
         } else {
             var filteredMapLocations = self.mapLocations();
-            // filteredMapLocations.map(marker => marker.setMap(undefined));
-            filteredMapLocations.forEach(function (marker) {
-               marker.setMap(null);
-            });
+            if (!error) {
+                filteredMapLocations.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+            }
 
             filteredMapLocations = filteredMapLocations.filter(function (mapLocation) {
                 var title = mapLocation.title;
                 return title.toLowerCase().indexOf(lowerCaseLocationQuery.toLowerCase()) > -1;
             });
 
-            filteredMapLocations.forEach(function (marker) {
-                marker.setMap(map);
-            });
+            if (!error) {
+                filteredMapLocations.forEach(function (marker) {
+                    marker.setMap(map);
+                });
+            }
             return filteredMapLocations;
         }
     }, self);
 
     self.showMarkerInMap = function (data) {
-        console.log(data);
-        console.log('cliked: ' + data.title);
         new google.maps.event.trigger(data, 'click');
     };
 
@@ -145,7 +152,7 @@ function initMap() {
 
     // These are the real estate listings that will be shown to the user.
     // Normally we'd have these in a database instead.
-    var locations = mapLocationsArray;
+    var locations = mapLocations;
 
     var largeInfowindow = new google.maps.InfoWindow();
 
@@ -194,10 +201,16 @@ function initMap() {
 
     map.fitBounds(bounds);
 
-    console.log('markers array');
-
     var viewModel = createViewModel(markers)
 
+    ko.applyBindings(viewModel);
+
+}
+
+function errorOnMap() {
+    console.log('error loading google maps');
+
+    var viewModel = createViewModel(mapLocations, true)
     ko.applyBindings(viewModel);
 
 }
