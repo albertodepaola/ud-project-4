@@ -253,6 +253,7 @@ function populateInfoWindow(marker, infowindow) {
     }
 }
 
+// TODO refactor into promise to chain events outside of function responsibility
 function checkWikipediaContent(infowindow, marker) {
     // gets the location from the array by its index, stored in the marker id
     var mapLocation = mapLocationsArray[marker.id];
@@ -272,44 +273,9 @@ function checkWikipediaContent(infowindow, marker) {
         });
     } else {
         appendContentToInfoWindow(infowindow, '<h4>Wikipedia</h4><p>No wikipedia content for this place.</p>')
-        // TODO refactor into promise to chain events outside of function responsability
-        checkStreetViewPhoto(infowindow, marker);
     }
-
 }
 
-function checkStreetViewPhoto(infowindow, marker) {
-    // where the infowindow content will be loaded
-    var streetViewService = new google.maps.StreetViewService();
-    var radius = 50;
-    // In case the status is OK, which means the pano was found, compute the
-    // position of the streetview image, then calculate the heading, then get a
-    // panorama from that and set the options
-    function getStreetView(data, status) {
-        if (status == google.maps.StreetViewStatus.OK) {
-            var nearStreetViewLocation = data.location.latLng;
-            var heading = google.maps.geometry.spherical.computeHeading(
-                nearStreetViewLocation, marker.position);
-            appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><div id="pano"></div>');
-            var panoramaOptions = {
-                position: nearStreetViewLocation,
-                pov: {
-                    heading: heading,
-                    pitch: 30
-                }
-            };
-            var panorama = new google.maps.StreetViewPanorama(
-                document.getElementById('pano'), panoramaOptions);
-        } else {
-            appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4>' +
-                '<div>No Street View Found</div>');
-        }
-
-    }
-    // Use streetview service to get the closest streetview image within
-    // 50 meters of the markers position
-    streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-}
 
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
