@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */ 
 // Model
 var MapLocation = function(data) {
     this.id = data.id;
@@ -6,10 +7,10 @@ var MapLocation = function(data) {
     this.wikipediaSrc = data.wikipediaSrc;
     // TODO
     this.foursquareSrc = data.foursquareSrc;
-}
+};
 
-const WIKIPEDIA_API_URL_EN = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids='
-const WIKIPEDIA_API_URL_PT = 'https://pt.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids='
+const WIKIPEDIA_API_URL_EN = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids=';
+const WIKIPEDIA_API_URL_PT = 'https://pt.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids=';
 const WIKIPEDIA_PAGE_URL = 'https://en.wikipedia.org/wiki/';
 
 var mapLocationsArray = [
@@ -66,7 +67,7 @@ function createViewModel(markers, error = false, errorMessage = 'Error loading a
     }, self);
 
     self.showMarkerInMap = function (data) {
-        new google.maps.event.trigger(data, 'click');
+        google.maps.event.trigger(data, 'click');
     };
 
 }
@@ -159,21 +160,21 @@ function initMap() {
     // Normally we'd have these in a database instead.
     var locations = mapLocationsArray;
 
-    var largeInfowindow = new google.maps.InfoWindow();
+    const largeInfowindow = new google.maps.InfoWindow();
 
     // Style the markers a bit. This will be our listing marker icon.
-    var defaultIcon = makeMarkerIcon('0091ff');
+    const defaultIcon = makeMarkerIcon('0091ff');
 
     // Create a "highlighted location" marker color for when the user
     // mouses over the marker.
-    var highlightedIcon = makeMarkerIcon('FFFF24');
+    const highlightedIcon = makeMarkerIcon('FFFF24');
 
     // map bounds
     var bounds = new google.maps.LatLngBounds();
     // The following group uses the location array to create an array of markers on initialize.
     for (var i = 0; i < locations.length; i++) {
         // Get the position from the location array.
-        var position = locations[i].location;
+      	var position = locations[i].location;
         var title = locations[i].title;
         var id = locations[i].id;
         // Create a marker per location, and put into markers array.
@@ -206,7 +207,7 @@ function initMap() {
 
     map.fitBounds(bounds);
 
-    var viewModel = createViewModel(markers)
+    var viewModel = createViewModel(markers);
 
     ko.applyBindings(viewModel);
 
@@ -215,7 +216,7 @@ function initMap() {
 function errorOnMap() {
     console.log('error loading google maps');
 
-    var viewModel = createViewModel(mapLocationsArray, true)
+    var viewModel = createViewModel(mapLocationsArray, true);
     ko.applyBindings(viewModel);
 
 }
@@ -259,13 +260,13 @@ function checkWikipediaContent(infowindow, marker) {
             url: mapLocation.wikipediaSrc,
             dataType: 'jsonp',
         }).done(function(data){
-            appendContentToInfoWindow(infowindow, '<h4><a href="' + WIKIPEDIA_PAGE_URL + marker.title.replace(/\s/g, '_') +'">' + marker.title + '</a></h4>' + data.query.pages[0].extract.substring(0, 650))
+            appendContentToInfoWindow(infowindow, '<h4><a href="' + WIKIPEDIA_PAGE_URL + marker.title.replace(/\s/g, '_') +'">' + marker.title + '</a></h4>' + data.query.pages[0].extract.substring(0, 650));
         }).fail(function (error) {
             console.log(error);
-            appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>Could not load data</p>')
+            appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>Could not load data</p>');
         });
     } else {
-        appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>No wikipedia content for this place.</p>')
+        appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>No wikipedia content for this place.</p>');
     }
 }
 
