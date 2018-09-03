@@ -264,15 +264,15 @@ function checkWikipediaContent(infowindow, marker) {
             dataType: 'jsonp',
         }).done(function(data){
             console.log(data.query.pages[0]);
-            appendContentToInfoWindow(infowindow, '<h4>Wikipedia</h4>' + data.query.pages[0].extract.substring(0, 600))
+            appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4>' + data.query.pages[0].extract.substring(0, 600))
         }).fail(function (error) {
             console.log(error);
-            appendContentToInfoWindow(infowindow, '<h4>Wikipedia</h4><p>Could not load data</p>')
+            appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>Could not load data</p>')
         }).always(function () {
             checkStreetViewPhoto(infowindow, marker);
         });
     } else {
-        appendContentToInfoWindow(infowindow, '<h4>Wikipedia</h4><p>No wikipedia content for this place.</p>')
+        appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>No wikipedia content for this place.</p>')
     }
 }
 
