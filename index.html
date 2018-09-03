@@ -1,42 +1,155 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Places I would like to visit - Neighbourhood map project</title>
-    <meta name="viewport" content="initial-scale=1.0">
-    <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-  </head>
-  <body>
-    <div class="container">
-      <div class="options-box">
-        <h1>Places I would like to visit - Neighbourhood map project</h1>
-        <div data-bind="visible: error">
-          <span class="error" data-bind="text: errorMessage"></span>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Places to visit</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css" >
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+  <link rel="stylesheet" href="assets/css/custom.css">
+  <link rel="stylesheet" href="assets/css/custom-themes.css">
+  <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png" />
+  <style>
+
+    body,
+    html {
+      height: 100%;
+    }
+
+    .full-height {
+      height: 100%;
+      min-height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="page-wrapper chiller-theme sidebar-bg bg1 toggled full-height">
+  <nav id="sidebar" class="sidebar-wrapper">
+    <div class="sidebar-content">
+      <div class="sidebar-header">
+        <div class="user-info">
+                        <span class="user-name">
+                            Places to visit &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
         </div>
-        <div>
-          <label for="locationQuery">Search places</label>
-          <input id="locationQuery" placeholder="Filter markers" data-bind="textInput: locationQuery">
-        </div>
-        <div class="places-list">
-          <ul data-bind="foreach: searchResults">
-            <li>
-              <p data-bind="click: showMarkerInMap, text: title">
-              </p>
-            </li>
-            <hr>
-          </ul>
+        <div id="close-sidebar">
+          <i class="fas fa-times"></i>
         </div>
       </div>
-
-      <div id="map"></div>
+      <div class="alert alert-warning" role="alert" data-bind="visible: error">
+        <span data-bind="text: errorMessage"></span>
+      </div>
+      <!-- sidebar-header  -->
+      <div class="sidebar-search">
+        <div>
+          <div class="input-group">
+            <input id="locationQuery" type="text" class="form-control search-menu" placeholder="Search..." data-bind="textInput: locationQuery">
+            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- sidebar-search  -->
+      <div class="sidebar-menu">
+        <div class="header-menu">
+          <span>Places</span>
+        </div>
+        <ul data-bind="foreach: searchResults">
+          <li data-bind="click: showMarkerInMap">
+            <a href="#">
+              <i class="fas fa-map-marker"></i>
+              <span data-bind="text: title"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="sidebar-menu">
+        <div class="header-menu">
+          <span>Credits</span>
+        </div>
+        <ul >
+          <li >
+            <a href="https://github.com/azouaoui-med/pro-sidebar-template">
+              <i class="fab fa-github"></i>
+              <span>Sidebar Template</span>
+            </a>
+          </li>
+          <li >
+            <a href="https://getbootstrap.com/">
+              <i class="fas fa-book"></i>
+              <span>Bootstrap</span>
+            </a>
+          </li>
+          <li >
+            <a href="https://fontawesome.com/">
+              <i class="fab fa-font-awesome-alt"></i>
+              <span>Font Awesome</span>
+            </a>
+          </li>
+          <li >
+            <a href="https://jquery.com/">
+              <i class="fab fa-js"></i>
+              <span>JQuery</span>
+            </a>
+          </li>
+          <li >
+            <a href="https://github.com/AndrewStarlike/Cat-clicker-premium-pro-with-Knockout">
+              <i class="fab fa-github"></i>
+              <span>Cat Clicker Premium</span>
+            </a>
+          </li>
+          <li >
+            <a href="https://github.com/udacity/ud864">
+              <i class="fab fa-github"></i>
+              <span>Google Maps course repo</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- sidebar-menu  -->
     </div>
-    <script src="js/knockout-3.4.2.js"></script>
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/app.js"></script>
-    <script async
-            defer
-            onerror="errorOnMap()"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3umzq8VeOzvMUEKQkw8TWlx5Hu_vRuyw&libraries=geometry&v=3&callback=initMap">
-    </script>
-  </body>
+
+
+  </nav>
+  <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+    <i class="fas fa-bars"></i>
+  </a>
+  <!-- sidebar-wrapper  -->
+  <main class="page-content" class="full-height">
+    <div class="container-fluid full-height">
+      <div class="row full-height">
+        <div class="form-group col-md-12 full-height">
+          <div class="z-depth-1-half map-container full-height" id="map"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- page-content" -->
+</div>
+<!-- page-wrapper -->
+
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js" ></script>
+<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="js/custom.js"></script>
+<script src="js/knockout-3.4.2.js"></script>
+<script src="js/app.js"></script>
+
+<script async
+        defer
+        onerror="errorOnMap()"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3umzq8VeOzvMUEKQkw8TWlx5Hu_vRuyw&libraries=geometry&v=3&callback=initMap">
+</script>
+</body>
+
 </html>
