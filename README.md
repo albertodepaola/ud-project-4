@@ -3,7 +3,7 @@ This simple app loads a list of fixed places to visit and some information about
 
 
 ## Installation
-To run the project, simply clone the repository and open `index.html` in a web browser. 
+To run the project, simply clone the repository and open `index.html` in a web browser. A working version of the app is available in the github repo and can be found in this [link!](https://albertodepaola.github.io/ud-project-4/)
 
 # Credits
    - [Wikipedia](https://www.mediawiki.org/wiki/API:Main_page)
