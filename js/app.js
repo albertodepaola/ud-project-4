@@ -3,26 +3,22 @@ var MapLocation = function(data) {
     this.id = data.id;
     this.title = data.title;
     this.location = data.location;
-    // TODO
     this.wikipediaSrc = data.wikipediaSrc;
+    // TODO
     this.foursquareSrc = data.foursquareSrc;
 }
 
-const WIKIPEDIA_API_URL = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids='
+const WIKIPEDIA_API_URL_EN = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids='
+const WIKIPEDIA_API_URL_PT = 'https://pt.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids='
+const WIKIPEDIA_PAGE_URL = 'https://en.wikipedia.org/wiki/';
 
 var mapLocationsArray = [
-    new MapLocation({id: 1, title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}}),
-    new MapLocation({id: 2, title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}}),
-    new MapLocation({id: 3, title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}}),
-    new MapLocation({id: 4, title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}}),
-    new MapLocation({id: 5, title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}}),
-    new MapLocation({id: 6, title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}),
-    new MapLocation({
-        id: 7,
-        title: 'Empire state building',
-        location: {lat: 40.7484405, lng: -73.9856644},
-        // TODO put the hole url in a constant
-        wikipediaSrc: WIKIPEDIA_API_URL + '9736'}),
+    new MapLocation({id: 1, title: 'Turvo State Park', location: {lat: -27.1810977, lng: -53.9432112}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '52249899'}),
+    new MapLocation({id: 2, title: 'Guarita State Park', location: {lat: -29.3558406, lng: -49.7346058}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '120314'}),
+    new MapLocation({id: 3, title: 'Nova Petrópolis', location: {lat: -29.3757219, lng: -51.11431}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '1058942'}),
+    new MapLocation({id: 4, title: 'Aparados da Serra National Park', location: {lat: -29.1898946, lng: -50.248855}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '4143512'}),
+    new MapLocation({id: 5, title: 'Serra Geral National Park', location: {lat: -29.1361151, lng: -50.1992628}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '16465615'}),
+
 ];
 
 // Knockout ViewModel
@@ -263,13 +259,10 @@ function checkWikipediaContent(infowindow, marker) {
             url: mapLocation.wikipediaSrc,
             dataType: 'jsonp',
         }).done(function(data){
-            console.log(data.query.pages[0]);
-            appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4>' + data.query.pages[0].extract.substring(0, 600))
+            appendContentToInfoWindow(infowindow, '<h4><a href="' + WIKIPEDIA_PAGE_URL + marker.title.replace(/\s/g, '_') +'">' + marker.title + '</a></h4>' + data.query.pages[0].extract.substring(0, 650))
         }).fail(function (error) {
             console.log(error);
             appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>Could not load data</p>')
-        }).always(function () {
-            checkStreetViewPhoto(infowindow, marker);
         });
     } else {
         appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>No wikipedia content for this place.</p>')
