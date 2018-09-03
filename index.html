@@ -10,23 +10,11 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
         crossorigin="anonymous">
   <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="assets/css/custom.css">
   <link rel="stylesheet" href="assets/css/custom-themes.css">
   <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png" />
-  <style>
-
-    body,
-    html {
-      height: 100%;
-    }
-
-    .full-height {
-      height: 100%;
-      min-height: 600px;
-    }
-  </style>
 </head>
-
 <body>
 <div class="page-wrapper chiller-theme sidebar-bg bg1 toggled full-height">
   <nav id="sidebar" class="sidebar-wrapper">
@@ -41,7 +29,7 @@
           <i class="fas fa-times"></i>
         </div>
       </div>
-      <div class="alert alert-warning" role="alert" data-bind="visible: error">
+      <div class="alert alert-warning" role="alert" data-bind="visible: hasError">
         <span data-bind="text: errorMessage"></span>
       </div>
       <!-- sidebar-header  -->
@@ -129,7 +117,7 @@
     <i class="fas fa-bars"></i>
   </a>
   <!-- sidebar-wrapper  -->
-  <main class="page-content" class="full-height">
+  <main class="page-content full-height">
     <div class="container-fluid full-height">
       <div class="row full-height">
         <div class="form-group col-md-12 full-height">
@@ -149,6 +137,8 @@
 <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
 <script src="js/custom.js"></script>
 <script src="js/knockout-3.4.2.js"></script>
+<script src="js/models.js"></script>
+<script src="js/data.js"></script>
 <script src="js/app.js"></script>
 
 <script async

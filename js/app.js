@@ -1,35 +1,15 @@
 /*jshint esversion: 6 */ 
-// Model
-var MapLocation = function(data) {
-    this.id = data.id;
-    this.title = data.title;
-    this.location = data.location;
-    this.wikipediaSrc = data.wikipediaSrc;
-    // TODO
-    this.foursquareSrc = data.foursquareSrc;
-};
+// 'use strict';
 
-const WIKIPEDIA_API_URL_EN = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids=';
-const WIKIPEDIA_API_URL_PT = 'https://pt.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&formatversion=2&prop=extracts&pageids=';
-const WIKIPEDIA_PAGE_URL = 'https://en.wikipedia.org/wiki/';
-
-var mapLocationsArray = [
-    new MapLocation({id: 1, title: 'Turvo State Park', location: {lat: -27.1810977, lng: -53.9432112}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '52249899'}),
-    new MapLocation({id: 2, title: 'Guarita State Park', location: {lat: -29.3558406, lng: -49.7346058}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '120314'}),
-    new MapLocation({id: 3, title: 'Nova Petrópolis', location: {lat: -29.3757219, lng: -51.11431}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '1058942'}),
-    new MapLocation({id: 4, title: 'Aparados da Serra National Park', location: {lat: -29.1898946, lng: -50.248855}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '4143512'}),
-    new MapLocation({id: 5, title: 'Serra Geral National Park', location: {lat: -29.1361151, lng: -50.1992628}, wikipediaSrc: WIKIPEDIA_API_URL_EN + '16465615'}),
-
-];
-
-// Knockout ViewModel
-function createViewModel(markers, error = false, errorMessage = 'Error loading app.') {
+// Knockout ViewModel 
+function createViewModel(markers, error = false, customErrorMessage = 'Error loading app.') {
 
     var self = this;
 
-    self.error = ko.observable(error);
+    // when I try to use strict mode, it wont let me declare the variables as we did in the course practice
+    self.hasError = ko.observable(error);
 
-    self.errorMessage = ko.observable(errorMessage);
+    self.errorMessage = ko.observable(customErrorMessage);
 
     self.mapLocations = ko.observableArray(markers);
 
@@ -77,74 +57,7 @@ function createViewModel(markers, error = false, errorMessage = 'Error loading a
 var map;
 
 function initMap() {
-    // Create a styles array to use with the map.
-    var styles = [
-        {
-            featureType: 'water',
-            stylers: [
-                { color: '#19a0d8' }
-            ]
-        },{
-            featureType: 'administrative',
-            elementType: 'labels.text.stroke',
-            stylers: [
-                { color: '#ffffff' },
-                { weight: 6 }
-            ]
-        },{
-            featureType: 'administrative',
-            elementType: 'labels.text.fill',
-            stylers: [
-                { color: '#e85113' }
-            ]
-        },{
-            featureType: 'road.highway',
-            elementType: 'geometry.stroke',
-            stylers: [
-                { color: '#efe9e4' },
-                { lightness: -40 }
-            ]
-        },{
-            featureType: 'transit.station',
-            stylers: [
-                { weight: 9 },
-                { hue: '#e85113' }
-            ]
-        },{
-            featureType: 'road.highway',
-            elementType: 'labels.icon',
-            stylers: [
-                { visibility: 'off' }
-            ]
-        },{
-            featureType: 'water',
-            elementType: 'labels.text.stroke',
-            stylers: [
-                { lightness: 100 }
-            ]
-        },{
-            featureType: 'water',
-            elementType: 'labels.text.fill',
-            stylers: [
-                { lightness: -100 }
-            ]
-        },{
-            featureType: 'poi',
-            elementType: 'geometry',
-            stylers: [
-                { visibility: 'on' },
-                { color: '#f0e4d3' }
-            ]
-        },{
-            featureType: 'road.highway',
-            elementType: 'geometry.fill',
-            stylers: [
-                { color: '#efe9e4' },
-                { lightness: -25 }
-            ]
-        }
-    ];
-
+    
     // Create a new blank array for all the listing markers.
     var markers = [];
 
@@ -160,7 +73,9 @@ function initMap() {
     // Normally we'd have these in a database instead.
     var locations = mapLocationsArray;
 
-    const largeInfowindow = new google.maps.InfoWindow();
+    const largeInfowindow = new google.maps.InfoWindow({
+        maxWidth: 250
+      });
 
     // Style the markers a bit. This will be our listing marker icon.
     const defaultIcon = makeMarkerIcon('0091ff');
@@ -233,6 +148,7 @@ function populateInfoWindow(marker, infowindow) {
 
     bounceMarker(marker, 1000);
 
+    map.panTo(marker.getPosition());
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
         // Clear the infowindow content to give the streetview time to load.
@@ -260,7 +176,15 @@ function checkWikipediaContent(infowindow, marker) {
             url: mapLocation.wikipediaSrc,
             dataType: 'jsonp',
         }).done(function(data){
-            appendContentToInfoWindow(infowindow, '<h4><a href="' + WIKIPEDIA_PAGE_URL + marker.title.replace(/\s/g, '_') +'">' + marker.title + '</a></h4>' + data.query.pages[0].extract.substring(0, 650));
+            var html = '<h4><a href="' + 
+                WIKIPEDIA_PAGE_URL + 
+                marker.title.replace(/\s/g, '_') +'">' + 
+                marker.title + 
+                '</a></h4>' + 
+                // TODO get more flexible with the amount of text that gets loaded from wikipedia
+                data.query.pages[0].extract.substring(0, 450);
+
+            appendContentToInfoWindow(infowindow, html);
         }).fail(function (error) {
             console.log(error);
             appendContentToInfoWindow(infowindow, '<h4>' + marker.title + '</h4><p>Could not load data</p>');
