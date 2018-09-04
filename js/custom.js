@@ -13,7 +13,7 @@ jQuery(function ($) {
         }
 
     });
-
+/*
     // close sidebar 
     $("#close-sidebar").click(function () {
         $(".page-wrapper").removeClass("toggled");
@@ -23,7 +23,7 @@ jQuery(function ($) {
     $("#show-sidebar").click(function () {
         $(".page-wrapper").addClass("toggled");
     });
-
+*/
     //switch between themes 
     var themes = "chiller-theme ice-theme cool-theme light-theme";
     $('[data-theme]').click(function () {

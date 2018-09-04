@@ -15,6 +15,8 @@ function createViewModel(markers, error = false, customErrorMessage = 'Error loa
 
     self.locationQuery = ko.observable();
 
+    self.toggleSidebar = ko.observable(true);
+
     self.searchResults = ko.computed(function () {
         var lowerCaseLocationQuery = self.locationQuery();
         if(!lowerCaseLocationQuery){
@@ -49,6 +51,14 @@ function createViewModel(markers, error = false, customErrorMessage = 'Error loa
     self.showMarkerInMap = function (data) {
         google.maps.event.trigger(data, 'click');
     };
+
+    self.closeSidebar = function() {
+        self.toggleSidebar(false);
+    }
+
+    self.openSidebar = function() {
+        self.toggleSidebar(true);
+    }
 
 }
 

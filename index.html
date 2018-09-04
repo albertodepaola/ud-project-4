@@ -16,7 +16,7 @@
   <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png" />
 </head>
 <body>
-<div class="page-wrapper chiller-theme sidebar-bg bg1 toggled full-height">
+<div class="page-wrapper chiller-theme sidebar-bg bg1 full-height" data-bind="css: {toggled: toggleSidebar}">
   <nav id="sidebar" class="sidebar-wrapper">
     <div class="sidebar-content">
       <div class="sidebar-header">
@@ -25,7 +25,7 @@
                             Places to visit &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
         </div>
-        <div id="close-sidebar">
+        <div id="close-sidebar" data-bind="click: closeSidebar">
           <i class="fas fa-times"></i>
         </div>
       </div>
@@ -113,7 +113,7 @@
 
 
   </nav>
-  <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+  <a id="show-sidebar" data-bind="click: openSidebar" class="btn btn-sm btn-dark" href="#">
     <i class="fas fa-bars"></i>
   </a>
   <!-- sidebar-wrapper  -->
